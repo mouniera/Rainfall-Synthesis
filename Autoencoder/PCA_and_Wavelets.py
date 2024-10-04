@@ -75,8 +75,8 @@ def Wavelet_prediction(RR_field: NDArray[np.float32],dim: int,wavelet_mother='co
             L_coeff=np.append(L_coeff,LH)
             L_coeff=np.append(L_coeff,LV)
             L_coeff=np.append(L_coeff,LD)
-            threshold=np.sort(L_coeff)[-dim]
-            coeffs[0][coeffs[0]<threshold]=0.
+        threshold=np.sort(L_coeff)[-dim]
+        coeffs[0][coeffs[0]<threshold]=0.
         for i in range(1,len(coeffs)):
             coeffs[i][0][coeffs[i][0]<threshold]=0.
             coeffs[i][1][coeffs[i][1]<threshold]=0.
