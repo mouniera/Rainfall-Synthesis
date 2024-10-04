@@ -3,6 +3,7 @@ from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Dense, Flatten, Res
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.callbacks import ModelCheckpoint
 from numpy.typing import NDArray
+from keras.models import model_from_json
 import numpy as np
 
 #############################################################
@@ -43,7 +44,7 @@ def CAE(input_shape=(1,256, 384), filters=[16, 32, 64, 128], latent_space=40, st
     return model
 
 
-def Run(data_RR: NDArray[np.float32],Nb_filters: list[int],latent_space: int,size_filters: list[int],pmin: int,m: int,s: int,n: int,strides=[4,4,2,2],batch_size=256,l_rate=0.001,epochs_max=80) :
+def Run_train(data_RR: NDArray[np.float32],Nb_filters: list[int],latent_space: int,size_filters: list[int],pmin: int,m: int,s: int,n: int,strides=[4,4,2,2],batch_size=256,l_rate=0.001,epochs_max=80) :
     """ Run autoencoder training
 
     Args:
@@ -76,5 +77,19 @@ def Run(data_RR: NDArray[np.float32],Nb_filters: list[int],latent_space: int,siz
     model.compile(optimizer=opt, loss='mse', experimental_run_tf_function=False)    
     checkpointer = ModelCheckpoint(filepath=name_config+'_best_weights.h5', verbose=1, monitor='val_loss', mode='auto', save_best_only=True)
     model.fit(data_RR, data_RR, batch_size=batch_size, epochs=epochs_max, shuffle=True, validation_split=0.2, callbacks= [checkpointer])
-    return "OK"
+    return "Done"
+
+def Run_pred(RR_field: NDArray[np.float32],name_config:str) -> NDArray[np.float32] :
+    """ Autoencoder prediction (for reconstruction of rainfall fields)
+
+    Args:
+        RR_field (NDArray[np.float32]): rainfall field
+        name_config (str): name of autoencoder configuration
+    Returns:
+        NDArray[np.float32]: reconstructed fields
+    """
+    model = model_from_json(open(name_config +'_architecture.json').read())
+    model.load_weights(name_config+'_best_weights.h5')
+    predictions = model.predict(RR_field, batch_size=32, verbose=2)
+    return predictions
      
