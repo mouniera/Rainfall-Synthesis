@@ -23,9 +23,17 @@ Object_detection:
    radius: [15,12,10] #for total,moderate and heavy objects (in grid points)
    threshold: [0.2,3.,7.] #for total,moderate and heavy objects (in mm)
 
+val_database:
+   begin: '2021010103' #date YYYYMMDD + runtime HH
+   end: '2021123103'
+   delta_run: '24'
+   List_MB: [1,4] #first and last AROME-EPS member in the validation database
+
 path_data_IA: '/path_IA/...'
 path_attributs_IA: '/path_object_attribut_IA/'
 
 path_data_EPS: '/path_EPS/...'
-path_attributs_EPS: '/path_object_attribut_EPS/'
+path_attributs_EPS: '/path_object_attribut_EPS/...'
+
+path_scores: '/path_save_scores/...'
 

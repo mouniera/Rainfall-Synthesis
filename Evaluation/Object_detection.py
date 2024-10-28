@@ -68,7 +68,6 @@ def contours(field: NDArray,kernels) -> list[NDArray]:
         if np.max(field)>=obj_threshold :
             conv_RR=convolve_fft(field,kernels[i])
             objects_RR[conv_RR>obj_threshold]=1.
-            objects_RR[conv_RR<=obj_threshold]=0.
     return objects_RR
 
 def compute_attributs(date:str,run:str,list_MB:list[str],zone_l:list[str],lead_times:list[int],cumul_RR: int,type_AE_EPS: str,name_config=None):
@@ -98,7 +97,7 @@ def compute_attributs(date:str,run:str,list_MB:list[str],zone_l:list[str],lead_t
         path_out=path_attributs_AE+'/'+name_config+'/'
     else:
         path_data_date=path_data_EPS+'/'+date+'/R'+run+'/'
-        path_out=path_attributs_EPS+'/'+name_config+'/'
+        path_out=path_attributs_EPS+'/'
     for mb in list_MB :
         for Zone in zone_l :
             path_AE=path_data_date+"ConvAE_RR"+str(cumul_RR)+"h_MB"+mb+"_begin_"+str(lead_times[0])+"_end_"+str(lead_times[-1])+"_"+Zone+".hdf5"

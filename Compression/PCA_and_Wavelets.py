@@ -64,18 +64,18 @@ def Wavelet_prediction(RR_field: NDArray[np.float32],dim: int,wavelet_mother='co
     Returns:
         NDArray[np.float32]: reconstructed rainfall fields
     """
-    Wavelets_output=np.empty((RR_field.shape[0],RR_field.shape[1],RR_field.shape[2]))
+    wavelets_output=np.empty((RR_field.shape[0],RR_field.shape[1],RR_field.shape[2]))
     for index,RR in enumerate(RR_field):
         coeffs=pywt.wavedec2(RR, wavelet_mother, mode=mode)
-        L_coeff=np.array(coeffs[0].flatten())
+        l_coeff=np.array(coeffs[0].flatten())
         for i in range(1,len(coeffs)):
-            LH=np.array(coeffs[i][0]).flatten()
-            LV=np.array(coeffs[i][1]).flatten()
-            LD=np.array(coeffs[i][2]).flatten()
-            L_coeff=np.append(L_coeff,LH)
-            L_coeff=np.append(L_coeff,LV)
-            L_coeff=np.append(L_coeff,LD)
-        threshold=np.sort(L_coeff)[-dim]
+            lh=np.array(coeffs[i][0]).flatten()
+            lv=np.array(coeffs[i][1]).flatten()
+            ld=np.array(coeffs[i][2]).flatten()
+            l_coeff=np.append(l_coeff,lh)
+            l_coeff=np.append(l_coeff,lv)
+            l_coeff=np.append(l_coeff,ld)
+        threshold=np.sort(l_coeff)[-dim]
         coeffs[0][coeffs[0]<threshold]=0.
         for i in range(1,len(coeffs)):
             coeffs[i][0][coeffs[i][0]<threshold]=0.
@@ -83,8 +83,8 @@ def Wavelet_prediction(RR_field: NDArray[np.float32],dim: int,wavelet_mother='co
             coeffs[i][2][coeffs[i][2]<threshold]=0.
         recons=pywt.waverec2(coeffs, wavelet_mother, mode=mode)
         recons=np.float32(recons)
-        Wavelets_output[index]=recons
-    return Wavelets_output
+        wavelets_output[index]=recons
+    return wavelets_output
 
 
 

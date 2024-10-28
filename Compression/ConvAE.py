@@ -44,7 +44,7 @@ def CAE(input_shape=(1,256, 384), filters=[16, 32, 64, 128], latent_space=40, st
     return model
 
 
-def Run_train(data_RR: NDArray[np.float32],Nb_filters: list[int],latent_space: int,size_filters: list[int],pmin: int,m: int,s: int,n: int,strides=[4,4,2,2],batch_size=256,l_rate=0.001,epochs_max=80) :
+def Run_train(data_RR: NDArray[np.float32],nb_filters: list[int],latent_space: int,size_filters: list[int],pmin: int,m: int,s: int,n: int,strides=[4,4,2,2],batch_size=256,l_rate=0.001,epochs_max=80) :
     """ Run autoencoder training
 
     Args:
@@ -62,11 +62,11 @@ def Run_train(data_RR: NDArray[np.float32],Nb_filters: list[int],latent_space: i
         epochs_max (int, optional): epoch maximum for training. Defaults to 80.
     """
 
-    filters_str= '-'.join(str(e) for e in Nb_filters)
+    filters_str= '-'.join(str(e) for e in nb_filters)
     size_filters_str= '-'.join(str(e) for e in size_filters)
     strides_str= ''.join(str(e) for e in strides)
 
-    model= CAE(filters=Nb_filters, strides=strides, latent_space=latent_space, size_filters=size_filters)
+    model= CAE(filters=nb_filters, strides=strides, latent_space=latent_space, size_filters=size_filters)
     name_config="RR1h_4year_importance_pmin"+str(pmin)+"_m"+str(m)+"_s"+str(s)+"_Strides"+strides_str+"_Filters_nb_"+filters_str+"_size_"+size_filters_str+"_Latent_size_"+str(latent_space)+"_Batch_"+str(batch_size)+"_Epochs_"+str(epochs_max)+"_lr"+str(l_rate)+"_n"+str(n)
     json_string = model.to_json()
     open(name_config +'_architecture.json', 'w').write(json_string)

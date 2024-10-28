@@ -16,13 +16,13 @@ def importance(fields: NDArray[np.float32],pmin: float,m: float,s: int) ->  NDAr
         NDArray[np.float32]: probability of saving each sample 
     """
 
-    Importance_list=np.empty([fields.shape[0]])
+    importance_list=np.empty([fields.shape[0]])
     for index,k in  enumerate(fields) :
-        Mean_exp=np.mean(1-np.exp(-k/s)) 
-        Importance=pmin+m*Mean_exp
-        Importance=np.min((1,Importance))
-        Importance_list[index]=Importance
-    return Importance_list  
+        mean_exp=np.mean(1-np.exp(-k/s)) 
+        importance=pmin+m*mean_exp
+        importance=np.min((1,importance))
+        importance_list[index]=importance
+    return importance_list  
 
 def random_select(proba: float) -> bool :
     """ Choice to save sample or not
@@ -53,7 +53,7 @@ def extract_data(data_RR: NDArray[np.float32],pmin: float,m: float,s: int) -> ND
     Returns:
         NDArray[np.float32]: dataset with selected samples after importance sampling
     """
-    Imp_vect=importance(data_RR,pmin,m,s)
-    Bool=random_select_vect(Imp_vect)
-    data_RR_select=data_RR[Bool,:,:]
+    imp_vect=importance(data_RR,pmin,m,s)
+    bool=random_select_vect(imp_vect)
+    data_RR_select=data_RR[bool,:,:]
     return data_RR_select
