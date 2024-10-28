@@ -102,45 +102,45 @@ def main(date: str,runtime: str,cumul_RR: int,name_config: str,dict_all: dict,di
 
     #open pickle file
     with open(path_attributs_AE_file,'rb') as f:
-        Attributs_dict_AE=pickle.load(f)
+        attributs_dict_AE=pickle.load(f)
     with open(path_attributs_EPS_file,'rb') as f:
-        Attributs_dict_PE=pickle.load(f)
+        attributs_dict_PE=pickle.load(f)
     
     #loop over MB, subdomains, lead times and object types
     for mb in list_MB :
         for zone in zone_l :
             for lead_t in list_lead_t:
-                AE=Attributs_dict_AE[mb][zone][str(lead_t).zfill(2)]["AE"]
-                EPS=Attributs_dict_PE[mb][zone][str(lead_t).zfill(2)]["EPS"]
+                ae=attributs_dict_AE[mb][zone][str(lead_t).zfill(2)]["AE"]
+                eps=attributs_dict_PE[mb][zone][str(lead_t).zfill(2)]["EPS"]
                 for objet in ["tot","mod","heavy"]:
-                    AE_obj=AE[objet]
-                    EPS_obj=EPS[objet]
-                    contingency(dict_contingency[objet],EPS_obj["num_objet"],AE_obj["num_objet"])
-                    nb_objet_AE=len(AE_obj["num_objet"])
-                    nb_objet_EPS=len(EPS_obj["num_objet"])
-                    area_AE=AE_obj["area"]
-                    area_EPS=EPS_obj["area"]
-                    X_AE=AE_obj["X_Lon"]
-                    X_EPS=EPS_obj["X_Lon"]
-                    Y_AE=AE_obj["Y_Lat"]
-                    Y_EPS=EPS_obj["Y_Lat"]
+                    ae_obj=ae[objet]
+                    eps_obj=eps[objet]
+                    contingency(dict_contingency[objet],eps_obj["num_objet"],ae_obj["num_objet"])
+                    nb_objet_AE=len(ae_obj["num_objet"])
+                    nb_objet_EPS=len(eps_obj["num_objet"])
+                    area_AE=ae_obj["area"]
+                    area_EPS=eps_obj["area"]
+                    x_AE=ae_obj["X_Lon"]
+                    x_EPS=eps_obj["X_Lon"]
+                    y_AE=ae_obj["Y_Lat"]
+                    y_EPS=eps_obj["Y_Lat"]
                       
                     if nb_objet_EPS !=0 and nb_objet_AE !=0 :
-                        Couple_best=[[]]*nb_objet_AE #find best match
+                        couple_best=[[]]*nb_objet_AE #find best match
                         dist_best=np.empty((nb_objet_AE))
                         for i in range(nb_objet_AE):
-                            X_AE_obj_by_obj=X_AE[i]
-                            Y_AE_obj_by_obj=Y_AE[i]
+                            x_AE_obj_by_obj=x_AE[i]
+                            y_AE_obj_by_obj=y_AE[i]
                             dist_min=5000 #5000 km 
                             for j in range(nb_objet_EPS):
-                                X_EPS_obj_by_obj=X_EPS[j]
-                                Y_EPS_obj_by_obj=Y_EPS[j]
-                                dist=dist_lat_lon(Y_AE_obj_by_obj,X_AE_obj_by_obj,Y_EPS_obj_by_obj,X_EPS_obj_by_obj)
+                                x_EPS_obj_by_obj=x_EPS[j]
+                                y_EPS_obj_by_obj=y_EPS[j]
+                                dist=dist_lat_lon(y_AE_obj_by_obj,x_AE_obj_by_obj,y_EPS_obj_by_obj,x_EPS_obj_by_obj)
                                 if dist<dist_min :
                                     dist_min=dist
-                                    Couple_best[i]=(i,j)
+                                    couple_best[i]=(i,j)
                                     dist_best[i]=dist_min
-                        for (i,j) in Couple_best:
+                        for (i,j) in couple_best:
                             dict_all[objet]["Dist"].append(round(dist_best[i],2))
                             dict_all[objet]["Area_EPS"].append(area_EPS[j])
                             dict_all[objet]["Area_AE"].append(area_AE[i])
