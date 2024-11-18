@@ -11,7 +11,7 @@ from numpy.typing import NDArray
 
 #############################################################
 
-def PCA_fit(data_RR:NDArray[np.float32],n_compo: int) :
+def pca_fit(data_RR:NDArray[np.float32],n_compo: int) :
     """fit PCA in order to compare with autoencoder
 
     Args:
@@ -29,7 +29,7 @@ def PCA_fit(data_RR:NDArray[np.float32],n_compo: int) :
         pickle.dump(pca,f,pickle.HIGHEST_PROTOCOL)
     return "Done"
 
-def PCA_prediction(RR_field:NDArray[np.float32], n_compo: int)-> NDArray[np.float32]:
+def pca_prediction(RR_field:NDArray[np.float32], n_compo: int)-> NDArray[np.float32]:
     """Compute rainfall fields after PCA compression
 
     Args:
@@ -52,7 +52,7 @@ def PCA_prediction(RR_field:NDArray[np.float32], n_compo: int)-> NDArray[np.floa
     projected_no_norm=projected_no_norm.reshape((RR_field.shape[0],X,Y))
     return projected_no_norm
 
-def Wavelet_prediction(RR_field: NDArray[np.float32],dim: int,wavelet_mother='coif2',mode='symmetric')-> NDArray[np.float32] :
+def wavelet_prediction(RR_field: NDArray[np.float32],dim: int,wavelet_mother: str ='coif2',mode: str ='symmetric')-> NDArray[np.float32] :
     """Compute rainfall fields after Wavelet compression
 
     Args:

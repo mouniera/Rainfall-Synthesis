@@ -3,7 +3,7 @@ from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Dense, Flatten, Res
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.callbacks import ModelCheckpoint
 from numpy.typing import NDArray
-from keras.models import model_from_json
+from keras.models import model_from_json, Model
 import numpy as np
 
 #############################################################
@@ -11,7 +11,7 @@ import numpy as np
 #inspired by : https://github.com/XifengGuo/DCEC/blob/master/ConvAE.py
 #############################################################
 
-def CAE(input_shape=(1,256, 384), filters=[16, 32, 64, 128], latent_space=40, strides=[4,4,2,2], size_filters=[32,16,3,3]):
+def cae(input_shape=(1,256, 384), filters=[16, 32, 64, 128], latent_space=40, strides=[4,4,2,2], size_filters=[32,16,3,3]):
     """ Autoencoder architecture
     Args:
         input_shape (tuple, optional): input shape. Defaults to (1,256, 384).
@@ -43,8 +43,7 @@ def CAE(input_shape=(1,256, 384), filters=[16, 32, 64, 128], latent_space=40, st
     model.summary()
     return model
 
-
-def Run_train(data_RR: NDArray[np.float32],nb_filters: list[int],latent_space: int,size_filters: list[int],pmin: int,m: int,s: int,n: int,strides=[4,4,2,2],batch_size=256,l_rate=0.001,epochs_max=80) :
+def run_train(data_RR: NDArray[np.float32],nb_filters: list[int],latent_space: int,size_filters: list[int],pmin: int,m: int,s: int,n: int,strides:list[int] =[4,4,2,2],batch_size: int =256,l_rate: float=0.001,epochs_max: int =80) :
     """ Run autoencoder training
 
     Args:
@@ -56,7 +55,7 @@ def Run_train(data_RR: NDArray[np.float32],nb_filters: list[int],latent_space: i
         m (int): _importance sampling hyperparameter. Multiplying factor.
         s (int): importance sampling hyperparameter. Rainfall interest threshold.
         n (int): Number of attempt
-        strides (list, optional): . Defaults to [4,4,2,2].
+        strides (list[int], optional): Strides for convolutional layers. Defaults to [4,4,2,2].
         batch_size (int, optional): Batch size for training. Defaults to 256.
         l_rate (float, optional): learning rate for training. Defaults to 0.001.
         epochs_max (int, optional): epoch maximum for training. Defaults to 80.
@@ -66,8 +65,8 @@ def Run_train(data_RR: NDArray[np.float32],nb_filters: list[int],latent_space: i
     size_filters_str= '-'.join(str(e) for e in size_filters)
     strides_str= ''.join(str(e) for e in strides)
 
-    model= CAE(filters=nb_filters, strides=strides, latent_space=latent_space, size_filters=size_filters)
-    name_config="RR1h_4year_importance_pmin"+str(pmin)+"_m"+str(m)+"_s"+str(s)+"_Strides"+strides_str+"_Filters_nb_"+filters_str+"_size_"+size_filters_str+"_Latent_size_"+str(latent_space)+"_Batch_"+str(batch_size)+"_Epochs_"+str(epochs_max)+"_lr"+str(l_rate)+"_n"+str(n)
+    model= cae(filters=nb_filters, strides=strides, latent_space=latent_space, size_filters=size_filters)
+    name_config=f"RR1h_4year_importance_pmin{str(pmin)}_m{str(m)}_s{str(s)}_Strides{strides_str}_Filters_nb_{filters_str}_size_{size_filters_str}_Latent_size_{str(latent_space)}_Batch_{str(batch_size)}_Epochs_{str(epochs_max)}_lr{str(l_rate)}_n{str(n)}"
     json_string = model.to_json()
     open(name_config +'_architecture.json', 'w').write(json_string)
 
@@ -79,17 +78,23 @@ def Run_train(data_RR: NDArray[np.float32],nb_filters: list[int],latent_space: i
     model.fit(data_RR, data_RR, batch_size=batch_size, epochs=epochs_max, shuffle=True, validation_split=0.2, callbacks= [checkpointer])
     return "Done"
 
-def Run_pred(RR_field: NDArray[np.float32],name_config:str) -> NDArray[np.float32] :
+def run_pred(rr_field: NDArray[np.float32],name_config:str, latent_space: bool) -> NDArray[np.float32] :
     """ Autoencoder prediction (for reconstruction of rainfall fields)
 
     Args:
         RR_field (NDArray[np.float32]): rainfall field
         name_config (str): name of autoencoder configuration
+        latent_space (bool): return reconstructed fields (False) or latent space vector (True)
     Returns:
         NDArray[np.float32]: reconstructed fields
     """
     model = model_from_json(open(name_config +'_architecture.json').read())
     model.load_weights(name_config+'_best_weights.h5')
-    predictions = model.predict(RR_field, batch_size=32, verbose=2)
+    
+    if latent_space:
+        feature_model = Model(inputs=model.input, outputs=model.get_layer(name='embedding').output)
+        predictions = feature_model.predict(rr_field, batch_size=32, verbose=2)
+    else:
+        predictions = model.predict(rr_field, batch_size=32, verbose=2)
     return predictions
      

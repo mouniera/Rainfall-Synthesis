@@ -29,7 +29,7 @@ num_class_vect=np.vectorize(num_class)
 
 
 
-def som(Data_latent: NDArray,n_iter: int) -> 'susi SOM object, NDArray':
+def som(data_latent: NDArray,n_iter: int) -> 'susi SOM object, NDArray':
     """Self-Organizing Maps from susi package 
 
     Args:
@@ -41,8 +41,8 @@ def som(Data_latent: NDArray,n_iter: int) -> 'susi SOM object, NDArray':
     """
     run_config=load_yaml(path=Path(''), yaml_fname='config.yml')
     test_classif=susi.SOMClustering(n_rows=run_config['n_row_SOM'],n_columns=run_config['n_col_SOM'], n_iter_unsupervised=n_iter, train_mode_unsupervised='batch', random_state=1)
-    test_classif.fit(Data_latent)
-    clusters=np.array(test_classif.get_clusters(Data_latent))
+    test_classif.fit(data_latent)
+    clusters=np.array(test_classif.get_clusters(data_latent))
     classes=num_class_vect(clusters[:,0],clusters[:,1])
     return test_classif,classes
 
@@ -58,11 +58,11 @@ def main(zone:str,latent: str,cumul: str):
         SOM clastering and associated classes from latent space data are saved in pickle file
     """
     run_config=load_yaml(path=Path(''), yaml_fname='config.yml')
-    Data_latent=load_data_latent(zone,latent,cumul)
+    data_latent=load_data_latent(zone,latent,cumul)
     classif_list=[]
     classes_list=[]
     for n_iter in [1000,2000,5000,10000]:
-        test_classif,classes=som(Data_latent,n_iter)
+        test_classif,classes=som(data_latent,n_iter)
         classif_list.append(test_classif)
         classes_list.append(classes)
         u_matrix_1=test_classif.get_u_matrix()
