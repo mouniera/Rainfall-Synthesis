@@ -29,7 +29,7 @@ def pca_fit(data_RR:NDArray[np.float32],n_compo: int) :
         pickle.dump(pca,f,pickle.HIGHEST_PROTOCOL)
     return "Done"
 
-def pca_prediction(RR_field:NDArray[np.float32], n_compo: int)-> NDArray[np.float32]:
+def pca_prediction(rr_field:NDArray[np.float32], n_compo: int)-> NDArray[np.float32]:
     """Compute rainfall fields after PCA compression
 
     Args:
@@ -43,16 +43,16 @@ def pca_prediction(RR_field:NDArray[np.float32], n_compo: int)-> NDArray[np.floa
         pca=pickle.load(f)
     with open("StandardScaler.file","rb") as f :
         sc=pickle.load(f)
-    X,Y=RR_field.shape[1],RR_field.shape[2]
-    RR_field=RR_field.reshape((RR_field.shape[0],RR_field.shape[1]*RR_field.shape[2]))
-    RR_field=sc.transform(RR_field)
-    components = pca.transform(RR_field)
+    X,Y=rr_field.shape[1],rr_field.shape[2]
+    rr_field=rr_field.reshape((rr_field.shape[0],rr_field.shape[1]*rr_field.shape[2]))
+    rr_field=sc.transform(rr_field)
+    components = pca.transform(rr_field)
     projected = pca.inverse_transform(components)
     projected_no_norm=sc.inverse_transform(projected)
-    projected_no_norm=projected_no_norm.reshape((RR_field.shape[0],X,Y))
+    projected_no_norm=projected_no_norm.reshape((rr_field.shape[0],X,Y))
     return projected_no_norm
 
-def wavelet_prediction(RR_field: NDArray[np.float32],dim: int,wavelet_mother: str ='coif2',mode: str ='symmetric')-> NDArray[np.float32] :
+def wavelet_prediction(rr_field: NDArray[np.float32],dim: int,wavelet_mother: str ='coif2',mode: str ='symmetric')-> NDArray[np.float32] :
     """Compute rainfall fields after Wavelet compression
 
     Args:
@@ -64,9 +64,9 @@ def wavelet_prediction(RR_field: NDArray[np.float32],dim: int,wavelet_mother: st
     Returns:
         NDArray[np.float32]: reconstructed rainfall fields
     """
-    wavelets_output=np.empty((RR_field.shape[0],RR_field.shape[1],RR_field.shape[2]))
-    for index,RR in enumerate(RR_field):
-        coeffs=pywt.wavedec2(RR, wavelet_mother, mode=mode)
+    wavelets_output=np.empty((rr_field.shape[0],rr_field.shape[1],rr_field.shape[2]))
+    for index,rr in enumerate(rr_field):
+        coeffs=pywt.wavedec2(rr, wavelet_mother, mode=mode)
         l_coeff=np.array(coeffs[0].flatten())
         for i in range(1,len(coeffs)):
             lh=np.array(coeffs[i][0]).flatten()
