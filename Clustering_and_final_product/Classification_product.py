@@ -66,7 +66,7 @@ def main(zone:str,latent: str,cumul: str):
         classif_list.append(test_classif)
         classes_list.append(classes)
         u_matrix_1=test_classif.get_u_matrix()
-        plt.imshow(np.squeeze(u_matrix_1), cmap="Greys")
+        plt.imshow(np.squeeze (u_matrix_1), cmap="Greys")
         plt.colorbar()
         plt.title('SOM online, U matrix, n_iter= '+str(n_iter))
         plt.savefig(f"Test_SOM_batch_subgroups_{run_config['n_row_SOM']}by{run_config['n_col_SOM']}_dim{latent}_RR{cumul}_{str(n_iter)}_{zone}.png")
