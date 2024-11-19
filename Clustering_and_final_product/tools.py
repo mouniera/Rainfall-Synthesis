@@ -105,7 +105,7 @@ def background_map_scenarios(zone: str, lonlat: np.ndarray, ax_predefined: plt.a
     lat_bor=[lon_lat_1[1],lon_lat_2[1]]
     borders = lon_bor + lat_bor
 
-    name_region=path_config['Path_departement']
+    name_region=path_config['Plot']['department']
     region_shapes= list(shpreader.Reader(name_region).geometries())
     ax.set_extent(borders,proj) #map borders
     ax.add_geometries(region_shapes, ccrs.PlateCarree(),facecolor='none',edgecolor='lightgray',linewidth=0.5) #Add department 

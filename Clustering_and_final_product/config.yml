@@ -41,6 +41,7 @@ path_scores: '/path_save_scores/...'
 Plot:
     path_saved_classif: ''
     colorbar: ''
+    department: gadm36_FRA_2.shp
 
     bounds_RR: [0, 0.1, 1, 3, 5, 7, 10, 15, 20, 30, 50, 70, 100, 150, 200, 250, 300, 350, 1000]
     colors_RR: ['white', "#63006e", "#0000ff", "#00b2ff", "#00ffff", "#08dfd6", "#1cb8a5", "#6ba530", "#ffff00", "#ffd800", "#ffa500", "#ff0000", "#991407", "#ff00ff", "#a4ff00", "#00fa00", "#31be00", "#31858b"] 
