@@ -1,6 +1,8 @@
 # Rainfall classfication 
 
-Public repository for article: "Rainfall Classification from Kilometer-Scale Ensemble Forecasts with Neural Networks"
+Public repository for article: "Rainfall Classification from Kilometer-Scale Ensemble Forecasts with Neural Networks":
+
+!(final_product.png)
 
 ## License
 
